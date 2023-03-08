@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Alice",
+    "age": 23,
+    "address": "Beijing"
+  },
+  {
+    "name": "Bob",
+    "age": 34,
+    "address": "Shanghai"
+  },
+  {
+    "name": "Charlie",
+    "age": 45,
+    "address": "Guangzhou"
+  }
+]
