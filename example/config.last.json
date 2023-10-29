@@ -1,0 +1,42 @@
+{
+    "actual_people": "铲屎官1号",
+    "chat_id": "oc_5977ece588360fb340ee3e70deb64e77",
+    "debt": [
+        {
+            "creditor": "铲屎官1号",
+            "debtor": "铲屎官2号"
+        }
+    ],
+    "is_finished": false,
+    "is_first": true,
+    "last_card_content": {
+        "data": {
+            "template_id": "ctp_AA8KPds6qTEq",
+            "template_variable": {
+                "is_finished": "标记完成",
+                "peoples": [
+                    {
+                        "value": "ou_708fe07a5641ded57bbceaa72f9af08d"
+                    },
+                    {
+                        "value": "ou_1305652b831821a9e278948f9d91e824"
+                    }
+                ],
+                "today_people": "<at id=\"ou_708fe07a5641ded57bbceaa72f9af08d\"></at>",
+                "week_day": "周日"
+            }
+        },
+        "type": "template"
+    },
+    "last_people": "铲屎官1号",
+    "people_list": [
+        {
+            "name": "铲屎官1号",
+            "open_id": "ou_708fe07a5641ded57bbceaa72f9af08d"
+        },
+        {
+            "name": "铲屎官2号",
+            "open_id": "ou_1305652b831821a9e278948f9d91e824"
+        }
+    ]
+}
