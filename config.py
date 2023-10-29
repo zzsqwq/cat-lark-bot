@@ -36,6 +36,29 @@ class Config:
             self.people_list = [Person(item['name'], item['open_id']) for item in json_data['people_list']]
             self.chat_id = json_data['chat_id']
 
+    # Update config from json file
+    def update(self, filename=None):
+        """
+        Update the config instance from the specified JSON file.
+        If no filename is provided, use the previously stored filename.
+        """
+        if filename:
+            Config.filename = filename
+        if not hasattr(self, "filename"):
+            raise Exception('No filename has been specified previously. Provide a filename to update from.')
+
+        with open(self.filename, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+
+        self.debt = [Debt(item['creditor'], item['debtor']) for item in json_data['debt']]
+        self.is_first = json_data['is_first']
+        self.last_people = json_data['last_people']
+        self.is_finished = json_data['is_finished']
+        self.actual_people = json_data['actual_people']
+        self.last_card_content = json_data['last_card_content']
+        self.people_list = [Person(item['name'], item['open_id']) for item in json_data['people_list']]
+        self.chat_id = json_data['chat_id']
+
     @classmethod
     def from_json_file(cls, filename):
         with open(filename, 'r', encoding='utf-8') as f:
