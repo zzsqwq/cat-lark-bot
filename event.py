@@ -65,7 +65,7 @@ def do_interactive_card(data: lark.Card):
         else:
             card_content = get_evening_card_content(creditor.name)
         config.last_card_content = card_content
-        send_task_card(card_content)
+        send_task_card(card_content, creditor.name)
         config.save_to_json()
     else:
         raise ValueError(f"Unknown tag: {data.action.tag}")

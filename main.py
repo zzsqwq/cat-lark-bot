@@ -64,17 +64,35 @@ def get_evening_card_content(name: str) -> dict:
     return card_content
 
 
-def send_task_card(card_content: dict):
+def send_task_card(card_content: dict, name: str):
+
+    people = config.people_list[people_name_list.index(name)]
+
     request = CreateMessageRequest().builder().receive_id_type("chat_id").request_body(
         CreateMessageRequestBody().builder().msg_type("interactive").receive_id(
             "oc_70905eff36c3a557b20bf8f4a0eb25d7").content(
             json.dumps(card_content)).build()).build()
 
-    response = client.im.v1.chat.create(request)
+    response = client.im.v1.message.create(request)
 
     if not response.success():
         raise Exception(
             f"client.im.v1.chat.create failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}")
+    message_id = response.data.message_id
+    print("Message created, message_id: %s" % message_id)
+
+    request = UrgentSmsMessageRequest.builder() \
+        .message_id(message_id) \
+        .user_id_type("open_id") \
+        .request_body(UrgentReceivers.builder()
+                      .user_id_list([people.open_id])
+                      .build()) \
+        .build()
+
+    response = client.im.v1.message.urgent_sms(request)
+    if not response.success():
+        raise Exception(
+            f"client.im.v1.message.urgent_sms failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}")
 
     config.last_card_content = card_content
 
@@ -92,7 +110,7 @@ def send_morning_card():
             today_people = debt.debtor
             config.debt.pop(index)
 
-    send_task_card(get_morning_card_content(today_people))
+    send_task_card(get_morning_card_content(today_people), today_people)
 
     config.is_finished = False
     config.last_people = today_people
@@ -106,7 +124,7 @@ def send_evening_card():
 
     today_people = config.last_people
 
-    send_task_card(get_evening_card_content(today_people))
+    send_task_card(get_evening_card_content(today_people), today_people)
 
     config.is_first = True
     config.save_to_json()
