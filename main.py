@@ -70,7 +70,7 @@ def send_task_card(card_content: dict, name: str):
 
     request = CreateMessageRequest().builder().receive_id_type("chat_id").request_body(
         CreateMessageRequestBody().builder().msg_type("interactive").receive_id(
-            "oc_70905eff36c3a557b20bf8f4a0eb25d7").content(
+            config.chat_id).content(
             json.dumps(card_content)).build()).build()
 
     response = client.im.v1.message.create(request)
