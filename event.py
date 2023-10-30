@@ -27,22 +27,35 @@ def find_people_by_open_id(open_id: str) -> Person:
 def do_interactive_card(data: lark.Card):
     config.update()
     if data.action.tag == "button":
-        # Tag finish
+        # 如果不是本人更改/管理员更改，返回报错
+        action_people = find_people_by_open_id(data.open_id)
+        if action_people.name != config.last_people and not action_people.is_admin:
+            return 403, "无权限"
+
+        # 如果已经完成，直接返回
         if config.is_finished:
             return 200, "已经标记完成"
 
+        # 标记完成 -> 更新卡片信息 -> 保存配置 -> 返回卡片
         config.is_finished = True
         card_dict = config.last_card_content
         # TODO: is_finished to button_text
         card_dict["data"]["template_variable"]["is_finished"] = "已完成"
 
-        send_task_card(card_dict)
+        # send_task_card(card_dict)
         config.save_to_json()
+        return lark.JSON.marshal(card_dict)
     elif data.action.tag == "select_person":
-        # Tag select_person
+        # 如果不是本人更改/管理员更改，返回报错
+        action_people = find_people_by_open_id(data.open_id)
+        if action_people.name != config.last_people and not action_people.is_admin:
+            return 403, "无权限"
+
+        # 如果已经完成，直接返回
         if config.is_finished:
             return 200, "已经标记完成"
 
+        # 添加负债信息 -> 更新当前值班人&卡片内容 -> 根据 is_first 分情况发送卡片 -> 保存当前配置
         creditor = find_people_by_open_id(data.action.option)
         debtor = find_people_by_open_id(data.open_id)
 

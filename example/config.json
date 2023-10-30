@@ -26,7 +26,8 @@
     "people_list": [
         {
             "name": "铲屎官1号",
-            "open_id": "ou_708fe07a5641ded57bbceaa72f9af08d"
+            "open_id": "ou_708fe07a5641ded57bbceaa72f9af08d",
+            "is_admin": true
         },
         {
             "name": "铲屎官2号",
