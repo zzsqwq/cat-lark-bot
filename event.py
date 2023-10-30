@@ -39,8 +39,7 @@ def do_interactive_card(data: lark.Card):
         # 标记完成 -> 更新卡片信息 -> 保存配置 -> 返回卡片
         config.is_finished = True
         card_dict = config.last_card_content
-        # TODO: is_finished to button_text
-        card_dict["data"]["template_variable"]["is_finished"] = "已完成"
+        card_dict["data"]["template_variable"]["finish_button_text"] = "已完成"
 
         # send_task_card(card_dict)
         config.save_to_json()

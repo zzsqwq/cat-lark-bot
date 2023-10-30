@@ -57,7 +57,7 @@ def get_evening_card_content(name: str) -> dict:
                 "peoples": people_id_list,
                 "week_day": weekday_name_list[now.weekday()],
                 "today_people": people.at("id"),
-                "is_finished": "标记完成"
+                "finish_button_text": "标记完成"
             }
         }
     }
