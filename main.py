@@ -64,9 +64,11 @@ def get_evening_card_content(name: str) -> dict:
 def send_task_card(card_content: dict, name: str):
     people = config.people_list[people_name_list.index(name)]
 
+    chat_id = "oc_70905eff36c3a557b20bf8f4a0eb25d7" if config.is_debug else people.chat_id
+
     request = CreateMessageRequest().builder().receive_id_type("chat_id").request_body(
         CreateMessageRequestBody().builder().msg_type("interactive").receive_id(
-            config.chat_id).content(
+            chat_id).content(
             json.dumps(card_content)).build()).build()
 
     response = client.im.v1.message.create(request)
