@@ -5,7 +5,7 @@ from flask import Flask
 from lark_oapi.adapter.flask import *
 
 from client import ENCRYPT_KEY, VERIFICATION_TOKEN
-from config import Config, Person, Debt
+from config import Config, Person, Debt, get_logger
 from main import send_task_card, get_morning_card_content, get_evening_card_content
 
 config_dir = "config"
@@ -13,6 +13,8 @@ config_dir = "config"
 config = Config.from_json_file(os.path.join(config_dir, "config.json"))
 
 app = Flask(__name__)
+
+logger = get_logger("event")
 
 
 # TODO: 注册事件回调
@@ -28,6 +30,10 @@ def do_interactive_card(data: lark.Card):
     config.update()
     if data.action.tag == "button":
         # 如果不是本人更改/管理员更改，返回报错
+
+        if data.open_message_id != config.last_message_id:
+            return 403, "卡片已过期"
+
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
             return 403, "无权限"
@@ -43,9 +49,17 @@ def do_interactive_card(data: lark.Card):
 
         # send_task_card(card_dict)
         config.save_to_json()
+
+        logger.info(f"people {action_people.name} finished the task")
+
         return lark.JSON.marshal(card_dict)
+
     elif data.action.tag == "select_person":
         # 如果不是本人更改/管理员更改，返回报错
+
+        if data.open_message_id != config.last_message_id:
+            return 403, "卡片已过期"
+
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
             return 403, "无权限"
@@ -56,17 +70,21 @@ def do_interactive_card(data: lark.Card):
 
         # 添加负债信息 -> 更新当前值班人&卡片内容 -> 根据 is_first 分情况发送卡片 -> 保存当前配置
         creditor = find_people_by_open_id(data.action.option)
-        debtor = find_people_by_open_id(data.open_id)
+        # debtor = find_people_by_open_id(data.open_id)
+        last_people = config.last_people
 
-        config.debt.append(Debt(creditor.name, debtor.name))
+        config.debt.append(Debt(creditor.name, last_people))
         config.last_people = creditor.name
         if config.is_first:
             card_content = get_morning_card_content(creditor.name)
         else:
             card_content = get_evening_card_content(creditor.name)
-        config.last_card_content = card_content
+        # config.last_card_content = card_content
         send_task_card(card_content, creditor.name)
         config.save_to_json()
+
+        logger.info(f"people {action_people.name} add debt creditor: {creditor.name}, debtor: {last_people}")
+
     else:
         raise ValueError(f"Unknown tag: {data.action.tag}")
 

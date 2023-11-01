@@ -1,6 +1,38 @@
 import json
+import logging
+import os
 import shutil
+import sys
+from logging.handlers import TimedRotatingFileHandler
 from typing import *
+
+import lark_oapi
+
+LOG_DIR = "logs"
+
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
+
+
+def get_logger(name: str) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    ch_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(ch_formatter)
+    logger.addHandler(ch)
+
+    # 文件handler
+    fh = TimedRotatingFileHandler(f"{LOG_DIR}/{name}.log", when="midnight", backupCount=7)
+    fh.setLevel(logging.DEBUG)  # 可根据需要设置
+    fh_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(fh_formatter)
+    logger.addHandler(fh)
+    lark_oapi.logger.addHandler(fh)
+
+    return logger
 
 
 class Debt:
@@ -38,6 +70,8 @@ class Config:
             self.people_list = [Person(item['name'], item['open_id'], item.get("is_admin")) for item in
                                 json_data['people_list']]
             self.chat_id = json_data['chat_id']
+            self.is_debug = json_data['is_debug']
+            self.last_message_id = json_data['last_message_id']
 
     # Update config from json file
     def update(self, filename: str = None) -> None:
@@ -62,6 +96,8 @@ class Config:
         self.people_list = [Person(item['name'], item['open_id'], item.get("is_admin")) for item in
                             json_data['people_list']]
         self.chat_id = json_data['chat_id']
+        self.is_debug = json_data['is_debug']
+        self.last_message_id = json_data['last_message_id']
 
     @classmethod
     def from_json_file(cls, filename: str) -> 'Config':
