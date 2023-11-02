@@ -34,21 +34,21 @@ def do_interactive_card(data: lark.Card):
         if data.open_message_id != config.last_message_id:
             resp = RawResponse()
             resp.status_code = 403
-            resp.content = "卡片已过期"
+            resp.content = bytes("卡片已过期", encoding="utf-8")
             return resp
 
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
             resp = RawResponse()
             resp.status_code = 403
-            resp.content = "无权限"
+            resp.content = bytes("无权限", encoding="utf-8")
             return resp
 
         # 如果已经完成，直接返回
         if config.is_finished:
             resp = RawResponse()
             resp.status_code = 400
-            resp.content = "已经完成"
+            resp.content = bytes("已经完成", encoding="utf-8")
             return resp
 
         # 标记完成 -> 更新卡片信息 -> 保存配置 -> 返回卡片
@@ -69,21 +69,21 @@ def do_interactive_card(data: lark.Card):
         if data.open_message_id != config.last_message_id:
             resp = RawResponse()
             resp.status_code = 403
-            resp.content = "卡片已过期"
+            resp.content = bytes("卡片已过期", encoding="utf-8")
             return resp
 
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
             resp = RawResponse()
             resp.status_code = 403
-            resp.content = "无权限"
+            resp.content = bytes("无权限", encoding="utf-8")
             return resp
 
         # 如果已经完成，直接返回
         if config.is_finished:
             resp = RawResponse()
             resp.status_code = 400
-            resp.content = "已经完成"
+            resp.content = bytes("已经完成", encoding="utf-8")
             return resp
 
         # 添加负债信息 -> 更新当前值班人&卡片内容 -> 根据 is_first 分情况发送卡片 -> 保存当前配置
