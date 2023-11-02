@@ -32,15 +32,24 @@ def do_interactive_card(data: lark.Card):
         # 如果不是本人更改/管理员更改，返回报错
 
         if data.open_message_id != config.last_message_id:
-            return 403, "卡片已过期"
+            resp = RawResponse()
+            resp.status_code = 403
+            resp.content = "卡片已过期"
+            return resp
 
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
-            return 403, "无权限"
+            resp = RawResponse()
+            resp.status_code = 403
+            resp.content = "无权限"
+            return resp
 
         # 如果已经完成，直接返回
         if config.is_finished:
-            return 200, "已经标记完成"
+            resp = RawResponse()
+            resp.status_code = 400
+            resp.content = "已经完成"
+            return resp
 
         # 标记完成 -> 更新卡片信息 -> 保存配置 -> 返回卡片
         config.is_finished = True
@@ -58,15 +67,24 @@ def do_interactive_card(data: lark.Card):
         # 如果不是本人更改/管理员更改，返回报错
 
         if data.open_message_id != config.last_message_id:
-            return 403, "卡片已过期"
+            resp = RawResponse()
+            resp.status_code = 403
+            resp.content = "卡片已过期"
+            return resp
 
         action_people = find_people_by_open_id(data.open_id)
         if action_people.name != config.last_people and not action_people.is_admin:
-            return 403, "无权限"
+            resp = RawResponse()
+            resp.status_code = 403
+            resp.content = "无权限"
+            return resp
 
         # 如果已经完成，直接返回
         if config.is_finished:
-            return 200, "已经标记完成"
+            resp = RawResponse()
+            resp.status_code = 400
+            resp.content = "已经完成"
+            return resp
 
         # 添加负债信息 -> 更新当前值班人&卡片内容 -> 根据 is_first 分情况发送卡片 -> 保存当前配置
         creditor = find_people_by_open_id(data.action.option)
