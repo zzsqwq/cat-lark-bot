@@ -91,6 +91,12 @@ def do_interactive_card(data: lark.Card):
         # debtor = find_people_by_open_id(data.open_id)
         last_people = config.last_people
 
+        if creditor == action_people:
+            resp = RawResponse()
+            resp.status_code = 400
+            resp.content = bytes("不能选择自己", encoding="utf-8")
+            return resp
+
         config.debt.append(Debt(creditor.name, last_people))
         config.last_people = creditor.name
         if config.is_first:
