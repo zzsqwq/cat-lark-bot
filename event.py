@@ -1,5 +1,6 @@
 import os
 
+import json
 import lark_oapi as lark
 from flask import Flask
 from lark_oapi.adapter.flask import *
@@ -7,6 +8,7 @@ from lark_oapi.adapter.flask import *
 from client import ENCRYPT_KEY, VERIFICATION_TOKEN
 from config import Config, Person, Debt, get_logger
 from main import send_task_card, get_morning_card_content, get_evening_card_content
+
 
 config_dir = "config"
 
@@ -121,12 +123,12 @@ card_handler = lark.CardActionHandler.builder(ENCRYPT_KEY, VERIFICATION_TOKEN, l
 @app.route("/today_people", methods=["GET"])
 def today_people():
     # JSON 格式返回
-    return config.last_people
+    return json.dumps({"today_people": config.last_people}, ensure_ascii=False)
 
 @app.route("/is_finished", methods=["GET"])
 def is_finished():
     # JSON 格式返回
-    return str(config.is_finished)
+    return json.dumps({"is_finished": config.is_finished}, ensure_ascii=False)
 
 @app.route("/card", methods=["POST"])
 def card():
