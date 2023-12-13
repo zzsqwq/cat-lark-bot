@@ -118,6 +118,15 @@ card_handler = lark.CardActionHandler.builder(ENCRYPT_KEY, VERIFICATION_TOKEN, l
     .register(do_interactive_card) \
     .build()
 
+@app.route("/today_people", methods=["GET"])
+def today_people():
+    # JSON 格式返回
+    return config.last_people
+
+@app.route("/is_finished", methods=["GET"])
+def is_finished():
+    # JSON 格式返回
+    return str(config.is_finished)
 
 @app.route("/card", methods=["POST"])
 def card():
