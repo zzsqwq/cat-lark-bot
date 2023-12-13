@@ -1,6 +1,6 @@
+import json
 import os
 
-import json
 import lark_oapi as lark
 from flask import Flask
 from lark_oapi.adapter.flask import *
@@ -8,7 +8,6 @@ from lark_oapi.adapter.flask import *
 from client import ENCRYPT_KEY, VERIFICATION_TOKEN
 from config import Config, Person, Debt, get_logger
 from main import send_task_card, get_morning_card_content, get_evening_card_content
-
 
 config_dir = "config"
 
@@ -101,7 +100,7 @@ def do_interactive_card(data: lark.Card):
 
         config.debt.append(Debt(creditor.name, last_people))
         config.last_people = creditor.name
-        if config.is_first: # 需要发布和上一条同样的卡片，而不是反转的
+        if config.is_first:  # 需要发布和上一条同样的卡片，而不是反转的
             card_content = get_evening_card_content(creditor.name)
         else:
             card_content = get_morning_card_content(creditor.name)
@@ -120,18 +119,18 @@ card_handler = lark.CardActionHandler.builder(ENCRYPT_KEY, VERIFICATION_TOKEN, l
     .register(do_interactive_card) \
     .build()
 
+
 @app.route("/today_people", methods=["GET"])
 def today_people():
     # JSON 格式返回
     return json.dumps({"today_people": config.last_people}, ensure_ascii=True)
 
+
 @app.route("/is_finished", methods=["GET"])
 def is_finished():
     # JSON 格式返回
-    if config.is_finished:
-      return json.dumps({"is_finished": 1}, ensure_ascii=False)
-    else:
-      return json.dumps({"is_finished": 0}, ensure_ascii=False)
+    return json.dumps({"is_finished": 1 if config.is_finished else 0}, ensure_ascii=True)
+
 
 @app.route("/card", methods=["POST"])
 def card():
