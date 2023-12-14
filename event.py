@@ -123,12 +123,14 @@ card_handler = lark.CardActionHandler.builder(ENCRYPT_KEY, VERIFICATION_TOKEN, l
 @app.route("/today_people", methods=["GET"])
 def today_people():
     # JSON 格式返回
+    config.update()
     return json.dumps({"today_people": config.last_people}, ensure_ascii=True)
 
 
 @app.route("/is_finished", methods=["GET"])
 def is_finished():
     # JSON 格式返回
+    config.update()
     return json.dumps({"is_finished": 1 if config.is_finished else 0}, ensure_ascii=True)
 
 
