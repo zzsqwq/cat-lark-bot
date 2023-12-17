@@ -1,1 +1,1 @@
-A lark bot that reminds somebody to shovel shit for cat.
+A lark bot that reminds somebody to clean up poop for cat.
