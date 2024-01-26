@@ -133,6 +133,13 @@ def is_finished():
     config.update()
     return json.dumps({"is_finished": 1 if config.is_finished else 0}, ensure_ascii=True)
 
+@app.route("/finish", methods=["POST"])
+def finish():
+    config.update()
+    config.is_finished = True
+    config.save_to_json()
+    return json.dumps({"status": "ok"}, ensure_ascii=True)
+
 
 @app.route("/card", methods=["POST"])
 def card():
