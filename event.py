@@ -101,10 +101,10 @@ def do_interactive_card(data: lark.Card):
 
         config.debt.append(Debt(creditor.name, last_people))
         config.last_people = creditor.name
-        if config.is_first:  # 需要发布和上一条同样的卡片，而不是反转的
-            card_content = get_evening_card_content(creditor.name)
-        else:
-            card_content = get_morning_card_content(creditor.name)
+        # if config.is_first:  # 需要发布和上一条同样的卡片，而不是反转的
+        card_content = get_evening_card_content(creditor.name)
+        # else:
+        #     card_content = get_morning_card_content(creditor.name)
         # config.last_card_content = card_content
         send_task_card(card_content, creditor.name)
         config.save_to_json()

@@ -100,8 +100,7 @@ def send_task_card(card_content: dict, name: str):
     config.last_card_content = card_content
     config.last_message_id = message_id
 
-
-def send_morning_card():
+def get_today_people() -> str:
     if config.is_finished:
         today_people = get_next_people(config.actual_people)
         config.actual_people = today_people
@@ -114,26 +113,32 @@ def send_morning_card():
             today_people = debt.debtor
             config.debt.pop(index)
 
-    send_task_card(get_morning_card_content(today_people), today_people)
+    return today_people
 
-    config.is_finished = False
-    config.last_people = today_people
-    config.is_first = False
-    config.save_to_json()
-
-    logger.debug(f"send_morning_card: {today_people}")
 
 
 def send_evening_card():
-    if config.is_finished:
-        logger.error("You have already finished your task today!")
-        raise Exception("You have already finished your task today!")
+    # if config.is_finished:
+    #     logger.error("You have already finished your task today!")
+    #     raise Exception("You have already finished your task today!")
 
-    today_people = config.last_people
+    if config.is_finished:
+        today_people = get_next_people(config.actual_people)
+        config.actual_people = today_people
+    else:
+        today_people = config.last_people
+
+    # check if is a creditor
+    for index, debt in enumerate(config.debt):
+        if debt.creditor == today_people:
+            today_people = debt.debtor
+            config.debt.pop(index)
 
     send_task_card(get_evening_card_content(today_people), today_people)
 
-    config.is_first = True
+    config.is_finished = False
+    config.last_people = today_people
+    # config.is_first = True
     config.save_to_json()
 
     logger.debug(f"send_evening_card: {today_people}")
@@ -141,10 +146,10 @@ def send_evening_card():
 
 def main():
     # 第二天早上
-    if config.is_first:
-        send_morning_card()
-    else:
-        send_evening_card()
+    # if config.is_first:
+    #     send_morning_card()
+    # else:
+    send_evening_card()
 
 
 if __name__ == "__main__":
