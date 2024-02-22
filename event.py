@@ -4,8 +4,9 @@ import os
 import lark_oapi as lark
 from flask import Flask
 from lark_oapi.adapter.flask import *
+from lark_oapi.api.im.v1 import *
 
-from client import ENCRYPT_KEY, VERIFICATION_TOKEN
+from client import ENCRYPT_KEY, VERIFICATION_TOKEN, client
 from config import Config, Person, Debt, get_logger
 from main import send_task_card, get_morning_card_content, get_evening_card_content
 
@@ -133,11 +134,33 @@ def is_finished():
     config.update()
     return json.dumps({"is_finished": 1 if config.is_finished else 0}, ensure_ascii=True)
 
+
 @app.route("/finish", methods=["POST"])
 def finish():
     config.update()
     config.is_finished = True
+    card_dict = config.last_card_content
+    card_dict["data"]["template_variable"]["finish_button_text"] = "已完成"
+
+    # 更新卡片为已完成
+    request: PatchMessageRequest = PatchMessageRequest.builder() \
+        .message_id(config.last_message_id) \
+        .request_body(PatchMessageRequestBody.builder()
+                      .content(lark.JSON.marshal(card_dict))
+                      .build()) \
+        .build()
+    response: PatchMessageResponse = client.im.v1.message.patch(request)
+
+    # 处理失败返回
+    if not response.success():
+        lark.logger.error(
+            f"client.im.v1.message.patch failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}")
+        return
+
+    # 处理业务结果
+    lark.logger.info(lark.JSON.marshal(response.data, indent=4))
     config.save_to_json()
+
     return json.dumps({"status": "ok"}, ensure_ascii=True)
 
 
