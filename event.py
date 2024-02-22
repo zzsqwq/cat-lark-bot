@@ -161,7 +161,7 @@ def finish():
     lark.logger.info(lark.JSON.marshal(response.data, indent=4))
     config.save_to_json()
 
-    return json.dumps({"status": "ok"}, ensure_ascii=True)
+    return json.dumps({"is_finished": 1}, ensure_ascii=True)
 
 
 @app.route("/card", methods=["POST"])
