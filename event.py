@@ -158,7 +158,6 @@ def finish():
         return
 
     # 处理业务结果
-    lark.logger.info(lark.JSON.marshal(response.data, indent=4))
     config.save_to_json()
 
     return json.dumps({"is_finished": 1}, ensure_ascii=True)
