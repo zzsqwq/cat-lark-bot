@@ -81,7 +81,7 @@ def send_task_card(card_content: dict, name: str):
     message_id = response.data.message_id
     logger.info("Message created, message_id: %s" % message_id)
 
-    if not config.is_debug and not config.is_first:
+    if not config.is_debug:
         request = UrgentSmsMessageRequest.builder() \
             .message_id(message_id) \
             .user_id_type("open_id") \
